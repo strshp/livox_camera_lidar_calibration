@@ -63,6 +63,12 @@ void getParameters() {
     }
 }
 
+void mouse_callback(int event, int x, int y, int flags, void *userdata){
+    if (event == cv::EVENT_LBUTTONDOWN) {
+        cout << x << ", " << y << endl;
+    }
+}
+
 int main(int argc, char **argv) {
     ros::init(argc, argv, "cornerPhoto");
     getParameters();
@@ -79,14 +85,14 @@ int main(int argc, char **argv) {
     vector<float> distortion;
     getDistortion(intrinsic_path, distortion);
 
-	// set intrinsic parameters of the camera
+    // set intrinsic parameters of the camera
     cv::Mat cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
     cameraMatrix.at<double>(0, 0) = intrinsic[0];
     cameraMatrix.at<double>(0, 2) = intrinsic[2];
     cameraMatrix.at<double>(1, 1) = intrinsic[4];
     cameraMatrix.at<double>(1, 2) = intrinsic[5];
 
-	// set radial distortion and tangential distortion
+    // set radial distortion and tangential distortion
     cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64F);
     distCoeffs.at<double>(0, 0) = distortion[0];
     distCoeffs.at<double>(1, 0) = distortion[1];
@@ -103,6 +109,7 @@ int main(int argc, char **argv) {
     // cv::namedWindow("source", CV_WINDOW_KEEPRATIO);
     cv::namedWindow("source");
     cv::imshow("source", src_img);
+    cv::setMouseCallback("source", mouse_callback);
     cv::waitKey(0);
     
     cv::destroyWindow("source");
@@ -121,7 +128,7 @@ int main(int argc, char **argv) {
         return 0;
     }
     cv::Size winSize = cv::Size(5, 5);
-	cv::Size zerozone = cv::Size(-1, -1);
+    cv::Size zerozone = cv::Size(-1, -1);
     cv::TermCriteria criteria = cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 40, 0.001);
     
     // cv::namedWindow("output", CV_WINDOW_KEEPRATIO);
@@ -142,10 +149,3 @@ int main(int argc, char **argv) {
     cv::waitKey(0);
     return 0;
 }
-
-
-
-
-
-
-
